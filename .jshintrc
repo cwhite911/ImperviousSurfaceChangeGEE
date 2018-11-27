@@ -1,0 +1,6 @@
+{
+    "esversion": 6,
+    "newcap": true,   // Require capitalization of all constructor functions e.g. `new F()`.
+    "trailing": true,   // Prohibit trailing whitespaces.
+    "indent": 2       // Specify indentation spacing
+}

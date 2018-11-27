@@ -1,0 +1,13 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#map {
+    height: 100%;
+}
+
+.is-fullheight.columns {
+    height: calc(100vh - ( 3.25rem - .75rem ) );
+}
