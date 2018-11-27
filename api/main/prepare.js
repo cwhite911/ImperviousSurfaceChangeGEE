@@ -15,29 +15,29 @@ const invariantColorModel = function(target, band1, band2) {
  * @param {*} imageCollection 
  * @param {*} bounds 
  */
-module.exports = async function(imageCollection, bounds) {
-    var mosaic = imageCollection.mosaic();
+exports = module.exports = async (imageCollection, bounds) => {
+    let mosaic = imageCollection.mosaic();
     //Add NDVI
-    var ndvi = mosaic.normalizedDifference(['N', 'R']);
+    const ndvi = mosaic.normalizedDifference(['N', 'R']);
   
     //Add canny
-    var canny = ee.Algorithms.CannyEdgeDetector({
+    const canny = ee.Algorithms.CannyEdgeDetector({
       image: mosaic, threshold: 10, sigma: 1
     });
     //Add hough
-    var hough = ee.Algorithms.HoughTransform(canny, 256, 600, 100);
+    const hough = ee.Algorithms.HoughTransform(canny, 256, 600, 100);
   
     //Hue Correction
-    var red = mosaic.select('R');
-    var blue = mosaic.select('B');
-    var green = mosaic.select('G');
+    const red = mosaic.select('R');
+    const blue = mosaic.select('B');
+    const green = mosaic.select('G');
     
-    var redICM = invariantColorModel(red, green, blue);
-    var blueICM = invariantColorModel(blue, red, green);
-    var greenICM = invariantColorModel(green, red, blue);
+    const redICM = invariantColorModel(red, green, blue);
+    const blueICM = invariantColorModel(blue, red, green);
+    const greenICM = invariantColorModel(green, red, blue);
   
     // Define a "fat" Gaussian kernel.
-  var fat = ee.Kernel.gaussian({
+  const fat = ee.Kernel.gaussian({
     radius: 3,
     sigma: 3,
     units: 'pixels',
@@ -46,7 +46,7 @@ module.exports = async function(imageCollection, bounds) {
   });
   
   // Define a "skinny" Gaussian kernel.
-  var skinny = ee.Kernel.gaussian({
+  const skinny = ee.Kernel.gaussian({
     radius: 3,
     sigma: 1,
     units: 'pixels',
@@ -54,25 +54,25 @@ module.exports = async function(imageCollection, bounds) {
   });
   
   // Compute a difference-of-Gaussians (DOG) kernel.
-  var dog = fat.add(skinny);
+  const dog = fat.add(skinny);
   
   // Compute the zero crossings of the second derivative, display.
-  var zeroXings = mosaic.convolve(dog).zeroCrossing();
-  var nir = mosaic.select('N');
-  var glcm = nir.glcmTexture({size: 4});
-  var contrast = glcm.select('N_contrast');
-  var correlation = glcm.select('N_corr');             
-  var secondMoment = glcm.select('N_sent');
+  const zeroXings = mosaic.convolve(dog).zeroCrossing();
+  const nir = mosaic.select('N');
+  const glcm = nir.glcmTexture({size: 4});
+  const contrast = glcm.select('N_contrast');
+  const correlation = glcm.select('N_corr');             
+  const secondMoment = glcm.select('N_sent');
    
   // Define a boxcar or low-pass kernel.
-  var boxcar = ee.Kernel.square({
+  const boxcar = ee.Kernel.square({
     radius: 7, units: 'pixels', normalize: true
   });
   
   // Smooth the image by convolving with the boxcar kernel.
-  var smooth = mosaic.convolve(boxcar);
+  const smooth = mosaic.convolve(boxcar);
   
-  var features = ee.Image(mosaic)
+  let features = ee.Image(mosaic)
     .addBands(ndvi)
     .addBands(zeroXings)
     .addBands(contrast)
