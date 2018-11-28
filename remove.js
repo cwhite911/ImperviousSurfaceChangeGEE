@@ -1,3 +1,6 @@
+
+//Original script remove once full implemented
+
 const ee = require('@google/earthengine');
 const privateKey = require('./private/plott-906-0fc429d7a212.json');
 const prepare =  require('./prepare.js');
